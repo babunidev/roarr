@@ -89,3 +89,11 @@ The ROARR addon draws from the following built‑in emotes when a trigger fires:
 * **/flex** – Show of strength.
 
 These are selected at random whenever your configured action slot activates and passes the chance + cooldown rules.
+
+## Development documentation
+
+- [Concept](CONCEPT.md) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md)
+- [Architecture](docs/ARCHITECTURE.md) · [Design evidence](docs/DECISIONS.md) · [Development journal](docs/DEVLOG.md)
+- [AI collaborator rules](AGENTS.md)
+
+The development journal distinguishes original author direction, source-based reconstruction, AI assistance, and independently verified behavior.
