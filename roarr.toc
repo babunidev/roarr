@@ -1,7 +1,7 @@
 ## Interface: 11200
 ## Title: ROARR
 ## Notes: Plays emote on action slot /roarr.
-## Author: Babunigaming (Morkahja / Buxbrew)
+## Author: Babuni.dev
 ## Version: 1.0
 ## SavedVariables: ROARRDB
 
