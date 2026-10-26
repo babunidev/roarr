@@ -1,5 +1,7 @@
 # ROARR Addon — Readme
 
+**Author:** Babuni.dev
+
 ROARR is a lightweight World of Warcraft 1.12 add-on that plays a random battle-themed emote whenever you press a specific action-bar button. It is fully configurable: slot, chance, cooldown, and enable/disable state.
 
 ## Features
