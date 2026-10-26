@@ -1,99 +1,77 @@
-# ROARR Addon — Readme
+# ROARR — action-slot battle emotes
 
-**Author:** Babuni.dev
+**Author / creative director:** Babuni.dev  
+**Repository:** `babunidev/roarr`  
+**Client target declared in source:** World of Warcraft 1.12 / interface `11200`  
+**Addon version:** 1.0  
+**Verification:** Static repository inspection; not tested in-game during this documentation pass.
 
-ROARR is a lightweight World of Warcraft 1.12 add-on that plays a random battle-themed emote whenever you press a specific action-bar button. It is fully configurable: slot, chance, cooldown, and enable/disable state.
+ROARR makes an ordinary action-bar button a chance for spontaneous roleplay. The addon watches one configured action slot, and after checking its enable switch, cooldown and probability, it chooses one of five built-in game emotes: **ROAR, CHARGE, CHEER, BORED, FLEX**. The underlying action is still forwarded to World of Warcraft.
 
-## Features
+This is a small **expressive addon**, not automatic combat decision-making, a scripted ability rotation, or a source of custom voice/animation assets.
 
-* Random emotes when pressing a chosen action slot
-* Adjustable cooldown (no upper limit)
-* Adjustable proc chance (0–100%)
-* Watch mode to detect action slot numbers
-* On/Off toggle without losing configuration
-* Small tutorial built into the slash command
+## Install and try it
 
-## Installation
+Install both files in the game’s addon directory:
 
-Place the folder **roarr** inside:
-
-```
-Interface/AddOns/
-```
-
-Make sure the folder contains:
-
-* `roarr.lua`
-* `roarr.toc`
-
-Restart your game.
-
-## Commands
-
-Use `/roarr` followed by a command:
-
-* **slot <n>** — sets which action slot triggers the emote
-* **watch** — prints slot numbers when pressing buttons
-* **chance <0-100>** — probability that an emote fires
-* **cd <seconds>** — cooldown between emotes
-* **on / off** — enable or disable the emote firing
-* **info** — show current settings
-* **reset** — clears the stored slot
-* **save** — saves current settings to SavedVariables
-* **tutorial** — short guide on how to set up the addon
-
-Example setup:
-
-```
-/roarr watch
-# press your ability until you see its slot number
-/roarr slot 3
-/roarr chance 40
-/roarr cd 12
-/roarr on
+```text
+Interface/
+└── AddOns/
+    └── roarr/
+        ├── roarr.toc
+        └── roarr.lua
 ```
 
-## How It Works
+Restart the game and enable ROARR. The client must support the addon’s 1.12-era APIs; live compatibility has not been verified by this review.
 
-ROARR hooks into the `UseAction` function. Each time you press your chosen action slot, the addon checks:
+1. Run `/roarr tutorial` to read the addon’s seven-step setup guide.
+2. Run `/roarr watch`, then press the button whose slot you want to learn.
+3. Enter `/roarr slot 3` (replace `3` with the reported slot number).
+4. Turn the watch messages off with `/roarr watch`.
+5. Optionally set `/roarr chance 40`, `/roarr cd 12`, and `/roarr on`.
 
-* Is ROARR enabled?
-* Does the slot match your configured slot?
-* Is the cooldown ready?
-* Does the random chance succeed?
+### Command reference
 
-If all conditions pass, a random emote from the pool fires.
+| Command | Current source behavior |
+| --- | --- |
+| `/roarr tutorial` | Print the extended seven-step setup guide |
+| `/roarr watch` | Toggle reporting of pressed action slot numbers |
+| `/roarr slot <number>` | Select and save the watched slot |
+| `/roarr chance <0-100>` | Set the percent chance of an emote at an eligible attempt |
+| `/roarr cd <seconds>` | Set a cooldown of zero or greater; no fixed maximum |
+| `/roarr on` / `/roarr off` | Enable or disable responses without clearing saved settings |
+| `/roarr info` | Show slot, chance, cooldown, enabled status and pool size |
+| `/roarr reset` | Clear the selected action slot |
+| `/roarr save` | Save current settings to the account-wide `ROARRDB` |
 
-## Notes
+Defaults are **on**, **100% chance**, a **6-second cooldown**, and no configured slot.
 
-* All emotes use WoW’s built-in `DoEmote()` tokens.
-* Works on Vanilla WoW’s Lua 5.0 environment.
-* Does *not* alter gameplay or combat decisions—pure flavour.
+**Important timing detail:** The code updates its cooldown timestamp **before** the chance roll. A failed 40% roll still consumes the cooldown interval. This is a source observation, not a proposal to change gameplay.
 
-## License
+## Relationship to `babunidev/roar`
 
-Free to modify, copy, or shout into the void. Enjoy your glorious battle-cries.
+There are **two separate GitHub repositories**. The [older `roar` repository](https://github.com/babunidev/roar) went through ROAR/ROARR renaming experiments on **November 22–23, 2025** and already contained the same core ROARR system. This repository, `roarr`, was first uploaded on **November 23, 2025**, with the same addon configuration and gameplay code, and shortly afterward gained a longer `/roarr tutorial`.
 
-## Author
+In the currently committed versions, the **Lua files are identical apart from that tutorial branch**. The Git history supports a closely related second repository snapshot, but does **not** establish why the creator maintained two repos or which should be the authoritative distribution. Neither repo was merged, deleted or redirected during this documentation work.
 
-ROAR is created and maintained by **Babunigaming (Morkahja / Buxbrew)**.
+ROARR also must not be confused with the separate, more advanced **RoarForever** project without an explicit creator-approved relationship.
 
-## Emotes Used
+## Scope and limitations
 
-The ROARR addon draws from the following built‑in emotes when a trigger fires:
+- An emote is attempted on **button press**, not after successful casting or entering combat.
+- `DoEmote` uses built-in game tokens. A text fallback is used if that API is absent.
+- The code wraps global `UseAction`; other addons doing the same may create load-order interactions.
+- Configurations are saved **account-wide**, even if characters use different action bars.
+- The saved state is loaded lazily. The logout handler may overwrite stored values with defaults if the player never uses a hooked action or command during the session; this is a risk identified from source, not a tested failure.
+- Although the source declares Lua 5.0 compatibility, actual client behavior must be verified before making a broad support claim.
 
-* **/roar** – Fierce shout.
-* **/charge** – Dynamic charge‑up animation.
-* **/cheer** – Celebration moment.
-* **/bored** – Idle impatience.
-* **/flex** – Show of strength.
+## License and author credit
 
-These are selected at random whenever your configured action slot activates and passes the chance + cooldown rules.
+**Project author:** Babuni.dev. The repository includes an MIT `LICENSE` with a historic copyright notice for **Elexior (2025)**. The notice has deliberately **not been changed**; this review does not establish whether the historical name and current author credit identify the same rights holder. The license file governs distribution rather than the informal “shout into the void” wording of the earlier README.
 
 ## Development documentation
 
-- [Concept](CONCEPT.md) · [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md)
-- [Architecture](docs/ARCHITECTURE.md) · [Design evidence](docs/DECISIONS.md) · [Development journal](docs/DEVLOG.md)
-- [AI collaborator rules](AGENTS.md)
-
-The development journal distinguishes original author direction, source-based reconstruction, AI assistance, and independently verified behavior.
+- [Concept](CONCEPT.md) · [Interaction design](docs/DESIGN.md) · [Emote/content inventory](docs/CONTENT.md)
+- [Architecture](docs/ARCHITECTURE.md) · [Decision evidence](docs/DECISIONS.md) · [Development journal](docs/DEVLOG.md)
+- [Roadmap](ROADMAP.md) · [Changelog](CHANGELOG.md)
+- [Human–AI collaboration](docs/AI_COLLABORATION.md) · [Developer instructions](AGENTS.md)
